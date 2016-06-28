@@ -73,6 +73,9 @@ some kind of interpolation between the known points.
 
 ** Trilinear interpolation
 
+A trilinear interpolation is a linear interpolation performed eight
+times. It is commonly used when sampling from a three-dimensional
+scalar field.
 
 * Applications
 
@@ -92,7 +95,7 @@ some kind of interpolation between the known points.
 
 * The rendering equation
 
-# Detailed explanation of the problem we are trying to solve.
+** Detailed explanation of the problem
 
 The initial problem we are trying to solve is how light scatters in a
 3d-space and then how to project it down to a discrete 2d-plane. This
@@ -102,7 +105,7 @@ integral. Some of the earliest papers on the subjects by
 Kajiya\citep{Kajiya1986} and Immel\citep{Immel1986} as a
 generalization of various other methods.
 
-# The rendering integral
+** The rendering integral
 
 \begin{equation}
 I(x', x) = \int_{a}^{b}f(x)\,\mathrm{d}x
@@ -112,7 +115,7 @@ The rendering integral describes the light intensity of a point in space.
 For practical purposes, the integral is usually approximated with a
 sum.
 
-# Limitations
+** Limitations
 
 Certain phenomena cannot be expressed with this lighting
 model. Specifically caustic effects such as reflection and refraction
@@ -165,13 +168,17 @@ We imagine an eye or a camera looking at the volume, from which we
 shoot rays through every pixel in the plane. We sample the volume
 vector field along the ray for density.
 
-**** Calculation of intensity for light rays
 
-# First-hit,
+There are a few ways to accumulate the intensity for each light ray.
+     
+- First-hit - means that the intensity of the first non-zero hit of the volume is used for
+  the pixel.
 
-# Avg
+- Average - means that we always sample a certain number of steps and
+  then take the average of the the accumulated intensities.
 
-# Maximum Intensity Projection
+- Maximum Intensity Projection - means that we take the maximum of all
+  the intensities as the intensity of the pixel.
 
 *** Improvements and additions
 
