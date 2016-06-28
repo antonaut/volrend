@@ -1,0 +1,29 @@
+<html style="overflow: hidden;">
+  <head>
+    <meta charset="utf-8">
+    <title>Volume rendering</title>
+    <link rel="stylesheet" type="text/css" href="styles/style.css">
+    <link rel="stylesheet" type="text/css" href="styles/fontello-embedded.css">
+    <script data-main="scripts/require-init.js" src="scripts/lib/require.min.js"></script>
+    <script type="application/x-glsl" id="vertex-shader">
+     varying vec2 vUV;
+
+     void main() {
+         vUV = uv;
+         vec4 pos = vec4(position, 1.0);
+         gl_Position = projectionMatrix * modelViewMatrix * pos;
+     }
+    </script>
+    <script type="application/x-glsl" id="fragment-shader">
+     uniform sampler2D texture;
+     varying vec2 vUV;
+
+     void main() {
+         vec4 sample = texture2D(texture, vUV);
+         gl_FragColor = vec4(sample.xyz, sample.w);
+     }
+    </script>
+  </head>
+  <body style="margin: 0;">
+  </body>
+</html>

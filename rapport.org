@@ -1,0 +1,218 @@
+#+TITLE: Volume rendering in the web browser
+#+DESCRIPTION: A short description of techniques for rendering a volume in the browser
+#+AUTHOR: Anton Erholt
+#+OPTIONS:   H:5 num:nil toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:nil pri:nil tags:not-in-toc
+#+LaTeX_CLASS: article
+#+LaTeX_HEADER: \usepackage[margin=0.5in]{geometry}
+
+#+LaTeX_HEADER: \usepackage[parfill]{parskip}
+#+LaTeX_HEADER: \usepackage{mathtools}
+#+LaTeX_HEADER: \usepackage[utf8]{inputenc}
+#+LaTeX_HEADER: \usepackage[swedish]{babel}
+
+#+LaTeX_HEADER: \usepackage[T1]{fontenc}
+
+# #+LaTeX_HEADER: \renewcommand{\familydefault}{\sfdefault}
+
+#+LaTeX_HEADER: \usepackage[square,sort,comma]{natbib}
+#+LaTeX_HEADER: \bibliographystyle{alpha}
+#+LaTeX_HEADER: \bibliography{./ref}
+
+#+LaTeX_HEADER: \usepackage{setspace}
+#+LaTeX_HEADER: \usepackage{moreverb}
+#+LaTeX_HEADER: \usepackage{amssymb}
+#+LaTeX_HEADER: \usepackage{graphicx}
+#+LaTeX_HEADER: \usepackage{fancyhdr}
+#+LaTeX_HEADER: \usepackage{fixltx2e}
+#+LaTeX_HEADER: \usepackage{longtable}
+#+LaTeX_HEADER: \usepackage{float}
+#+LaTeX_HEADER: \usepackage{wrapfig}
+#+LaTeX_HEADER: \usepackage{soul}
+#+LaTeX_HEADER: \usepackage{textcomp}
+#+LaTeX_HEADER: \usepackage{marvosym}
+#+LaTeX_HEADER: \usepackage{wasysym}
+#+LaTeX_HEADER: \usepackage{latexsym}
+#+LaTeX_HEADER: \usepackage{hyperref}
+
+#+LANGUAGE:  en
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+
+#+LaTeX: \doublespacing
+
+* TODO todolist
+  - [X] Skriv en todolist
+  - [X] Ladda in datamängden
+  - [ ] Trilinjär interpolation i fragment shadern
+  - [ ] Ray casting
+  - [ ] Bestäm MIP/First hit etc.
+  - [ ] Skriv rapport
+
+* Introduction
+
+** Keywords
+- *Isotropic*
+  Uniform from all directions
+
+- *Plenoptic*
+  Vector field applied to light (intensity, emission, radiance).
+
+- *Voxel*
+  Like a pixel, but for a volume. The smallest volume part in the
+  given three dimensional world to be rendered.
+
+* Methods
+
+** Volume representation
+There are several ways to represent a volume to be rendered. For the
+sake of this report we will reason about a volume as a
+three-dimensional scalar field. Every scalar in the field will
+correspond to a voxel's intensity at that point. In order to sample
+the scalar field at any point within the volume, one usually apply
+some kind of interpolation between the known points.
+
+** Trilinear interpolation
+
+
+* Applications
+
+* Conclusions
+
+
+* Introduction
+  This report explores some of the techniques which can be used to
+  render a 3d-volume in a web browser using the extremely popular
+  Javascript library THREE.js. There are quite a few techniques
+  available for rendering. The report briefly presents a few of the
+  techniques and then explains in more detail, the technique of Direct
+  Volume Rendering using Raycasting.
+
+  By limiting oneself to using the browser as a rendering medium, the
+  number of devices being able to run and display the result is enormous.
+
+* The rendering equation
+
+# Detailed explanation of the problem we are trying to solve.
+
+The initial problem we are trying to solve is how light scatters in a
+3d-space and then how to project it down to a discrete 2d-plane. This
+procedure is called rendering. A very well known and used
+approximation of the light scattering is called the rendering
+integral. Some of the earliest papers on the subjects by
+Kajiya\citep{Kajiya1986} and Immel\citep{Immel1986} as a
+generalization of various other methods.
+
+# The rendering integral
+
+\begin{equation}
+I(x', x) = \int_{a}^{b}f(x)\,\mathrm{d}x
+\end{equation}
+
+The rendering integral describes the light intensity of a point in space.
+For practical purposes, the integral is usually approximated with a
+sum.
+
+# Limitations
+
+Certain phenomena cannot be expressed with this lighting
+model. Specifically caustic effects such as reflection and refraction
+are not being taken into account with this type of integral.
+
+* Volume rendering methods
+# Should explain what methods are being used and the differences
+# between them. Maybe put some information about how relevant they are
+# in a WebGL context.
+
+# Direct rendering versus indirect rendering methods
+
+** Slicing
+
+# What?
+One approach to render volumes is slicing. This is done by having the
+
+# Where?
+CT-scans, MRI-cams
+
+# Why?
+Analogous to the way the data is produced
+
+# When?
+Mobile devices
+
+# What else?
+Artifacts
+
+** Direct Volume rendering with Raycasting (simplified)
+
+Entities used in the method:
+
+  - Two-dimensional plane representing the image to be
+    rendered. Discretized into pixels.
+
+  - Three-dimensional vector/scalar field of the volume to
+    visualize. Probably best described as a function of a position in
+    the volume returning the density/other data which somehow affects
+    the pixel color.
+
+  - Eye/camera (position and direction).
+
+The goal of the method is to render a volume data set to a
+two-dimensional plane.
+
+*** Raycasting
+
+We imagine an eye or a camera looking at the volume, from which we
+shoot rays through every pixel in the plane. We sample the volume
+vector field along the ray for density.
+
+**** Calculation of intensity for light rays
+
+# First-hit,
+
+# Avg
+
+# Maximum Intensity Projection
+
+*** Improvements and additions
+
+**** Transfer function or classifier
+
+\begin{equation}
+D(x) : \mathbb{R}^{3} \to \mathbb{R}^{3}
+\end{equation}
+
+\begin{equation}
+t : \mathbb{P} \to \mathbb{R}^{3}
+\end{equation}
+
+A transfer function is a function which describes the calculated pixel
+value with a color. It is used as a classifier to described the
+visualized data. The classifiers job is to tell what class the data
+belongs to. If you have volume data of a leg, the transfer function
+may map bone tissue to one class, muscle tissue to a second and skin to a
+third. It is not uncommon that transfer functions are looking a bit
+like probability distributions, since it may be hard to classify if a
+voxel on the border between two classes.
+
+**** Early ray termination
+
+If a ray has accumulated maximum intensity along its trajectory, it
+makes no sense to keep calculating. Finishing the
+calculation earlier will mean reducing the CPU-cycles needed and will
+significantly improve rendering times for certain cases.
+
+**** Grouping of similar regions to reduce sampling
+
+
+* Implementations
+
+
+
+* Tools/libraries
+  A great help when writing code for 3d-graphics in the browser is the
+  Three.js [fn:1] javascript library. The framework reduces the amount
+  of code needed to produce WebGL code.
+
+* Footnotes
+
+[fn:1] http://threejs.org

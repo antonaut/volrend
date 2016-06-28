@@ -1,0 +1,9 @@
+volrend/dataset/mouse0.*
+volrend/node_modules
+*~
+auto/
+model/
+*.xlsx
+Lecture*
+*.tex
+fix-tex.sh
